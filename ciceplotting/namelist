@@ -1,6 +1,7 @@
 [Experiment]
 
-exp = B1mink0,B5mink0,B20mink0,B45mink0
+exp =  Cgrid,Bgrid
+case = implicitFD
 plot_fields = 1
 read_all = 1
 plot_single = 1
@@ -14,11 +15,15 @@ dx = 5
 [Numerical]
 solver = implicit
 imex = 0
+global = 1
 
 [Figures]
-datadir = /home/fsd001/data/ppp5/cice/runs/INSTAhpcBgrid/history
-figdir = /home/fsd001/analysis/INSTAhpcBgrid
+datadir = /home/fsd001/data/ppp5/cice/runs/implicitFDgx3/history
+figdir = /home/fsd001/cice-analysis/Figures/
 
 [Time]
 dt = 60
-datestr = 2005-01-02-0000
+datestr = 2005-01-01-0000
+startdate = 2005-01-02
+enddate = 2005-01-04
+freq    = %Y-%m-%d
