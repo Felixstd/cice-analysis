@@ -41,10 +41,22 @@ def plot_global(data_experiments,
                 title,
                 figname):
     
-    var_plot = data_experiments[exp][datestr][var][0]
+    var_plot = data_experiments[exp][datestr][var][:]
 
-    tlon = data_experiments[exp][datestr]['TLON'][:, :]
-    tlat = data_experiments[exp][datestr]['TLAT'][:, :]
+    ds= data_experiments[exp][datestr]
+    ds = ds.where(ds.tmask == 1)
+
+    var_plot = ds[var][:]
+
+    ni, nj = np.shape(var_plot)[1:]
+    data = np.zeros((ni, nj),dtype=np.float32)
+    data[:,:] = var_plot[0]
+
+    data[data > 100.0 ] = np.nan
+
+    tlon = ds['TLON'][:, :].to_numpy()
+    tlat = ds['TLAT'][:, :].to_numpy()
+
 
     # Convert lon/lat to regular numpy arrays (remove masks)
     tlon = np.asarray(tlon)
@@ -52,8 +64,8 @@ def plot_global(data_experiments,
 
     # Replace non-finite values
     # maybe this is not the best way, but works for now 
-    tlon[~np.isfinite(tlon)] = 0. 
-    tlat[~np.isfinite(tlat)] = 0  
+    tlon[~np.isfinite(tlon)] = 1e10
+    tlat[~np.isfinite(tlat)] = 1e10
 
     # make circular boundary for polar stereographic circular plots
     theta = np.linspace(0, 2*np.pi, 100)
@@ -90,11 +102,11 @@ def plot_global(data_experiments,
     #Plot the first timeslice of aice
     this=ax.pcolormesh(tlon,
                        tlat,
-                       var_plot,
+                       data,
                        cmap=cmap,
                        vmax=vmax,
                        vmin=vmin,
-                       transform=ccrs.PlateCarree())
+                       transform=ccrs.PlateCarree(), shading = 'auto')
     
     ax2 = fig.add_subplot(1,2,2, projection=ccrs.SouthPolarStereo())
 
@@ -108,11 +120,11 @@ def plot_global(data_experiments,
     #Plot the first timeslice of aice
     aice2=ax2.pcolormesh(tlon,
                        tlat,
-                       var_plot,
+                       data,
                        cmap=cmap,
                        vmax=vmax,
                        vmin=vmin,
-                       transform=ccrs.PlateCarree())
+                       transform=ccrs.PlateCarree(), shading = 'auto')
     
     cbar = fig.colorbar(aice2,
                  ax = [ax, ax2], 
