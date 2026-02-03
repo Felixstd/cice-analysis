@@ -1,1 +1,5 @@
+#cpyuthon files
+*cpython*
+
+#cache
 ciceplotting/data/__pycache__/*
