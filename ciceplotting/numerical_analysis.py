@@ -210,7 +210,7 @@ def main():
 
 
     fig1, ax1 = plt.subplots()
-    colors = ['royalblue', 'forestgreen', 'maroon']
+    colors = ['royalblue', 'forestgreen', 'maroon', 'darkorange']
     for i, exp in enumerate(exps):
         solver = solvers[i]
 
@@ -223,7 +223,6 @@ def main():
     fig1.savefig(figdir+'comp_conv.png')
 
     fig1, ax1 = plt.subplots()
-    colors = ['royalblue', 'forestgreen', 'maroon']
     for i, exp in enumerate(exps):
         solver = solvers[i]
 
