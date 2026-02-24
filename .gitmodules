@@ -1,0 +1,3 @@
+[submodule "Numerics/Conjugate-Gradient"]
+	path = Numerics/Conjugate-Gradient
+	url = https://github.com/vschaik/Conjugate-Gradient.git
