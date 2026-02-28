@@ -135,6 +135,19 @@ def main():
             fig.supxlabel('Iterations')
             
             plt.savefig(figdir+'conv_'+solver+'.png')
+            plt.close()
+
+            if solver == 'BiCGSTABEll': 
+                num_iterations = np.arange(0, len(nonlin_value))
+                plt.figure()
+
+                pc = plt.scatter(num_iterations[:-1], nonlin_value[:-1], c = dict_exp['breakdown'], cmap = 'plasma')
+                plt.colorbar(pc, label = 'Number of Breakdowns')
+                plt.yscale('log')
+                plt.xlabel('Iterations')
+                plt.ylabel('Nonlinear L2norm')
+                # plt.scatter(np.arange(len(dict_exp['breakdown'])), dict_exp['breakdown'])
+                plt.savefig(figdir+'num_breakdowns.png')
 
             if monit_precond:
 
