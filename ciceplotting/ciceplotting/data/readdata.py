@@ -28,6 +28,7 @@ def read_cicelog(filename, solver, precond, monitor_nonlin, monitor_solver, moni
     precond_value  = []
     its_precond    = []
 
+    breakdowns_it  = []
     with open(filename, "r") as f:
         previous_iter = None
         for line in f:
@@ -66,7 +67,16 @@ def read_cicelog(filename, solver, precond, monitor_nonlin, monitor_solver, moni
                         val = float(m.group(2).replace("D", "E"))
                         solver_value.append(val)
 
-                        # print(it)
+
+                if solver == 'BiCGSTABEll':
+                    m = re.search(
+                                r"number_of_breakdowns\s*=\s*(\d+)", line
+                    )
+                    if m :
+                        it = int(m.group(1))
+                        breakdowns_it.append(it)
+
+                        
             
             if monitor_precond:
                 if precond+"_L2norm" in line:
@@ -83,7 +93,7 @@ def read_cicelog(filename, solver, precond, monitor_nonlin, monitor_solver, moni
 
                         previous_iter = it
     
-    return nonlin_value, progress_value, solver_value, its_precond, precond_value
+    return nonlin_value, progress_value, solver_value, its_precond, precond_value, breakdowns_it
 
 
 

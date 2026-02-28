@@ -39,7 +39,7 @@ def main():
 
         print('Reading Data')
         if num:
-            nonlin_value, progress_value, solver_value, its_precond, precond_value = readdata.read_cicelog(cicelog, 
+            nonlin_value, progress_value, solver_value, its_precond, precond_value, breakdown_its = readdata.read_cicelog(cicelog, 
                                                                                            solver, 
                                                                                            precond, 
                                                                                            True, 
@@ -49,7 +49,8 @@ def main():
                         'progress': progress_value, 
                         'solver'  : solver_value,
                         'precond': precond_value, 
-                        'its_precond': its_precond
+                        'its_precond': its_precond, 
+                        'breakdown' : breakdown_its
                         }
             
             num_solvers[exp] = dict_exp
