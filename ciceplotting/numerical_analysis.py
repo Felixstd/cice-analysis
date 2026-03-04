@@ -1,4 +1,5 @@
 import re
+import os 
 import numpy as np
 import xarray as xr 
 import cmocean as cm
@@ -6,14 +7,20 @@ import matplotlib.pyplot as plt
 
 from ciceplotting.data import readdata
 from ciceplotting.utils import arguments 
+from ciceplotting.plotting import plot_cice
+from collections import defaultdict
 
 
 plt.style.use('/home/fsd001/cice-analysis/ciceplotting/ciceplotting/plotting/science.mplstyle')
-datadir = '/home/fsd001/data/ppp5/cice/runs/CGCideal/history/'
-dir = '/home/fsd001/data/ppp5/cice/runs/CGCideal/'
-figdir = '/home/fsd001/cice-analysis/Figures/Numerics/'
+
 
 def main():
+
+    datadir = '/home/fsd001/data/ppp5/cice/runs/GlobalCG/history/'
+    dir = '/home/fsd001/data/ppp5/cice/runs/GlobalCG/'
+    figdir = '/home/fsd001/cice-analysis/Figures/Numerics/'
+
+    datelist = ['2005-01-01-03600']
 
     args = arguments.parse_args()
     exps = args.exp[1:].split(',')
@@ -24,7 +31,21 @@ def main():
     solvers = args.solver[1:].split(',')
     monit_precond = int(args.precond)
     preconds = args.precondname[1:].split(',')
+    case = args.case[1:]
 
+
+    if case == 'gx1':
+        data_experiments = defaultdict(dict)
+
+
+    if os.path.isdir(figdir+case):
+        print('Case exists')
+    else:
+        os.mkdir(figdir+case)
+    
+    figdir = figdir+case+'/'
+
+    
     num_solvers = {}
 
     for i, exp in enumerate(exps):
@@ -55,6 +76,17 @@ def main():
                         }
             
             num_solvers[exp] = dict_exp
+
+        if case == 'gx1':
+
+            dataset_exp = readdata.readdata(exp, 
+                                        datelist[0], 
+                                        'iceh_inst', 
+                                        datadir)
+
+            data_experiments[exp][datelist[0]] = dataset_exp
+
+
         if res:
 
             dataE = np.loadtxt(fileE)
@@ -223,6 +255,23 @@ def main():
             
             plt.savefig(figdir+'vel.png')
 
+
+        
+
+#--------- Comparaisons between experiments ------------#
+    if case == 'gx1':
+        print('hrtr')
+        for solver in solvers:
+            plot_cice.plot_global(data_experiments,
+                    exp, 
+                    datelist[0], 
+                    'uvelE', 
+                    [],
+                    r"u_E (m/s)", 
+                    '',
+                    'uvelE_'+solver, 
+                    figdir, 
+                    case)
 
     fig1, ax1 = plt.subplots()
     colors = ['royalblue', 'forestgreen', 'maroon', 'darkorange']
