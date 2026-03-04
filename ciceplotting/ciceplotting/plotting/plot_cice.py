@@ -134,6 +134,17 @@ def plot_global(data_experiments,
     plt.savefig(Parameters.figdir+'/'+Parameters.case+'/'+figname)
     # plt.savefig(figdir+figname)
     
+def plot_maxspeed(max_arctic, max_antarctic, 
+                  figdir    , figname):
+    
+    plt.figure()
+    plt.plot(np.arange(len(max_arctic)), max_arctic, color = 'royalblue', label = 'Arctic')
+    # plt.ylim(0, 1)
+    plt.plot(max_antarctic, color = 'darkred', label = 'Antarctic')
+    plt.yscale('log')
+    plt.legend()
+    plt.xlabel('Time')
+    plt.ylabel('Ice Speed (m/s)')
     plt.savefig(figdir+figname)
     
 
