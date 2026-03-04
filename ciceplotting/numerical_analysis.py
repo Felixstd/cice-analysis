@@ -251,34 +251,36 @@ def main():
     fig1.savefig(figdir+'comp_conv_solv.png')
 
 
-    
-    # fig1, ax1 = plt.subplots()
-    # fig2, ax2 = plt.subplots()
+    solver_values = np.array([num_solvers[k]['nonlin'] for k in exps])
 
-    # linestyles = ['--', '-.']
-    # colors = ['royalblue', 'forestgreen']
-    # for i, exp in enumerate(exps):
-    #     precond = preconds[i]
+    diff_solvers = np.diff(solver_values)[0]
 
-    #     iterations_solver = num_solvers[exp]['its_precond']
-    #     mean_its = np.mean(iterations_solver)
+    fig1, ax1 = plt.subplots()
 
+    ax1.plot(diff_solvers)
 
-    #     ax2.hist(iterations_solver, color = colors[i], bins = 20, label = precond)
-    #     ax2.axvline(mean_its, color = colors[i], linestyle = '--', zorder = 0)
+    ax1.set_yscale('symlog', linthresh = 1e-8)
+    # ax1.set_xscale('log')
+    ax1.set_xlabel('Solver Iterations')
+    ax1.set_ylabel(r'$r_{B} - r_{G}$ ')
+    fig1.legend(loc = 'upper right', bbox_to_anchor = (1.3, 0.9))
+    fig1.savefig(figdir+'diff_conv_solv.png')
 
+    fig2, ax2 = plt.subplots()
+    colors = ['royalblue', 'forestgreen']
+    for i, exp in enumerate(exps):
+        solver = solvers[i]
 
-    #     ax1.plot(num_solvers[exp]['nonlin'], label = precond, color = colors[i])
+        iterations_solver = num_solvers[exp]['its_solver']
+        mean_its = np.mean(iterations_solver)
 
-    # ax1.set_yscale('log')
-    # ax1.set_xlabel('Iterations')
-    # ax1.set_ylabel('L2norm')
-    # fig1.legend(loc = 'upper right', bbox_to_anchor = (1.25, 0.9))
-    # fig1.savefig(figdir+'comp_conv.png')
-    
-    # ax2.set_ylabel('Counts')
-    # ax2.set_xlabel("Iterations")
-    # fig2.legend(loc = 'upper right', bbox_to_anchor = (1.25, 0.9))
-    # fig2.savefig(figdir+'hist_itsprecond.png')
+        ax2.hist(iterations_solver, color = colors[i], bins = 20, label = solver, alpha = 0.7)
+        ax2.axvline(mean_its, color = colors[i], linestyle = '--', zorder = 1)
+
+    ax2.set_ylabel('Counts')
+    ax2.set_xlabel("Iterations")
+    ax2.legend(loc = 'best')#, bbox_to_anchor = (1.25, 0.9))
+    fig2.savefig(figdir+'hist_its_solver.png')
+
 if __name__ == '__main__':
     main()
