@@ -1,7 +1,7 @@
 [Experiment]
 
-exp =  Cgrid,Bgrid
-case = implicitFD
+exp = cap
+case = IMEX_CAP
 plot_fields = 1
 read_all = 1
 plot_single = 1
@@ -9,7 +9,7 @@ plot_single = 1
 [Dynamics]
 kstrength = 0
 gridtype = B
-var = iceh_inst
+var = iceh
 dx = 5
 
 [Numerical]
@@ -18,12 +18,12 @@ imex = 0
 global = 1
 
 [Figures]
-datadir = /home/fsd001/data/ppp5/cice/runs/implicitFDgx3/history
+datadir = /home/fsd001/data/ppp5/cice/runs/GlobalIMEX/history/IMEX_CAP
 figdir = /home/fsd001/cice-analysis/Figures/
 
 [Time]
 dt = 60
 datestr = 2005-01-01-0000
-startdate = 2005-01-02
-enddate = 2005-01-04
-freq    = %Y-%m-%d
+startdate = 2005-10
+enddate = 2005-12
+freq    = %Y-%m
