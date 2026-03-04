@@ -39,9 +39,7 @@ def plot_global(data_experiments,
                 Parameters,
                 var_label, 
                 title,
-                figname, 
-                figdir, 
-                case):
+                figname):
 
     ds = data_experiments[exp][datestr]
     ds = ds.where(ds.tmask == 1)
@@ -133,8 +131,17 @@ def plot_global(data_experiments,
     cbar.set_label(label = var_label, size = 14)
     fig.suptitle(title, x = 0.45, y = 0.65, size = 14)
 
-    # plt.savefig(Parameters.figdir+'/'+Parameters.case+'/'+figname)
+    plt.savefig(Parameters.figdir+'/'+Parameters.case+'/'+figname)
+    # plt.savefig(figdir+figname)
+    
     plt.savefig(figdir+figname)
+    
+
+
+
+
+
+
 
 
 
