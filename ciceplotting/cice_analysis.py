@@ -72,13 +72,16 @@ for exp in Parameters.exp:
     if Parameters.read_all:
         print('Reading Data')
 
+        max_speed_arctic, max_speed_antarctic = readdata.read_cicelog_dynamics(Parameters.datadir+'/cice.runlog.'+Parameters.case)
+
+
         for datestr in dates_list:
             print('Reading Date: ', datestr)
             dataset_exp = readdata.readdata(exp, 
                                         datestr, 
                                         Parameters.var, 
                                         Parameters.datadir)
-
+            
             data_experiments[exp][datestr] = dataset_exp
 
 
@@ -86,25 +89,29 @@ print('Plotting Figures')
 
 if Parameters.Global:
 
-    datestr = '2005-01-02'
+    datestr = '2005-11'
 
-    plot_cice.plot_global(data_experiments, 
-                        'Cgrid', 
-                        datestr, 
-                        'vvel', 
-                        Parameters,
-                        r'$v_{ice}$ (m/s)', 
-                        'C-grid',
-                        'vvel_cgrid'+'_'+datestr)
+    # plot_cice.plot_global(data_experiments, 
+    #                     'Cgrid', 
+    #                     datestr, 
+    #                     'vvel', 
+    #                     Parameters,
+    #                     r'$v_{ice}$ (m/s)', 
+    #                     'C-grid',
+    #                     'vvel_cgrid'+'_'+datestr)
     
     plot_cice.plot_global(data_experiments, 
-                        'Bgrid', 
+                        Parameters.exp[0], 
                         datestr, 
                         'vvel', 
                         Parameters,
                         r'$v_{ice}$ (m/s)', 
-                        'B-grid',
-                        'vvel_bgrid'+'_'+datestr)
+                        'Thermo IMEX',
+                        Parameters.exp[0]+'_vvel'+'_'+datestr)
+    
+
+    plot_cice.plot_maxspeed(max_speed_arctic, max_speed_antarctic, 
+                            Parameters.figdir+Parameters.case+"/", Parameters.exp[0]+'max_speed.png')
 
 if Parameters.imex:
 
