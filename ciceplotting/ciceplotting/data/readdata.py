@@ -27,8 +27,9 @@ def read_cicelog(filename, solver, precond, monitor_nonlin, monitor_solver, moni
     solver_value   = []
     precond_value  = []
     its_precond    = []
-
+    its_solver     = []
     breakdowns_it  = []
+
     with open(filename, "r") as f:
         previous_iter = None
         for line in f:
@@ -66,6 +67,10 @@ def read_cicelog(filename, solver, precond, monitor_nonlin, monitor_solver, moni
                         it = int(m.group(1))
                         val = float(m.group(2).replace("D", "E"))
                         solver_value.append(val)
+                        if it == 1 and previous_iter is not None:
+                            its_solver.append(previous_iter)
+
+                        previous_iter = it
 
 
                 if solver == 'BiCGSTABEll':
@@ -93,7 +98,7 @@ def read_cicelog(filename, solver, precond, monitor_nonlin, monitor_solver, moni
 
                         previous_iter = it
     
-    return nonlin_value, progress_value, solver_value, its_precond, precond_value, breakdowns_it
+    return nonlin_value, progress_value, solver_value, its_solver, its_precond, precond_value, breakdowns_it
 
 
 

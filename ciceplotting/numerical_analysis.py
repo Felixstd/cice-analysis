@@ -39,7 +39,7 @@ def main():
 
         print('Reading Data')
         if num:
-            nonlin_value, progress_value, solver_value, its_precond, precond_value, breakdown_its = readdata.read_cicelog(cicelog, 
+            nonlin_value, progress_value, solver_value, its_solver, its_precond, precond_value, breakdown_its = readdata.read_cicelog(cicelog, 
                                                                                            solver, 
                                                                                            precond, 
                                                                                            True, 
@@ -48,6 +48,7 @@ def main():
             dict_exp = {'nonlin'  : nonlin_value, 
                         'progress': progress_value, 
                         'solver'  : solver_value,
+                        'its_solver': its_solver,
                         'precond': precond_value, 
                         'its_precond': its_precond, 
                         'breakdown' : breakdown_its
@@ -141,7 +142,7 @@ def main():
                 num_iterations = np.arange(0, len(nonlin_value))
                 plt.figure()
 
-                pc = plt.scatter(num_iterations[:-1], nonlin_value[:-1], c = dict_exp['breakdown'], cmap = 'plasma')
+                pc = plt.scatter(num_iterations[:-1], nonlin_value[:-1], c = dict_exp['breakdown'][:-1], cmap = 'plasma')
                 plt.colorbar(pc, label = 'Number of Breakdowns')
                 plt.yscale('log')
                 plt.xlabel('Iterations')
