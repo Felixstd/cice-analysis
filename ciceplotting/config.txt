@@ -1,8 +1,9 @@
--e BiCGSTAB_diag_scale,CG_diag_scale,FGMRES_diag_scale,BiCGSTABEll_noprec
+-c gx1
+-e BiCGSTABpgmres_gx1,FPgmres_gx1
 -n 1
 -v 0 
 -g C
 -r 0
--s BiCGSTAB,CG,fgmres,bicgstab
+-s BiCGSTAB,fgmres
 -p 0
--P diag,diag,diag,diag
+-P pgmres,pgmres

@@ -12,6 +12,9 @@ def parse_args(num = True):
         #---- For numerical analysis ----#
         parser = ArgumentParser(fromfile_prefix_chars='@')
 
+        parser.add_argument('-c', "--case", dest = 'case', 
+                            help = 'case name for fig dir')
+
         parser.add_argument("-e", "--exp", dest="exp",
                             help="Experiment to read data from")
         
