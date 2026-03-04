@@ -39,11 +39,11 @@ def plot_global(data_experiments,
                 Parameters,
                 var_label, 
                 title,
-                figname):
-    
-    var_plot = data_experiments[exp][datestr][var][:]
+                figname, 
+                figdir, 
+                case):
 
-    ds= data_experiments[exp][datestr]
+    ds = data_experiments[exp][datestr]
     ds = ds.where(ds.tmask == 1)
 
     var_plot = ds[var][:]
@@ -84,7 +84,7 @@ def plot_global(data_experiments,
         vmax = 5
         vmin = 0
     
-    if (var == 'uvel' or var == 'vvel') : 
+    if ('uvel' in var or 'vvel' in var) : 
         cmap = cmo.cm.balance
         vmax = 0.8
         vmin = -0.8
@@ -133,21 +133,18 @@ def plot_global(data_experiments,
     cbar.set_label(label = var_label, size = 14)
     fig.suptitle(title, x = 0.45, y = 0.65, size = 14)
 
-    plt.savefig(Parameters.figdir+'/'+Parameters.case+'/'+figname)
+    # plt.savefig(Parameters.figdir+'/'+Parameters.case+'/'+figname)
+    plt.savefig(figdir+figname)
 
 
 
 
 
-def plot_1d(data_exps, 
-            exp, 
-            datestr,
-            Parameters,
-            var_label,
-            xlabel, 
-            ylabel, 
-            title,
-            figname, 
+def plot_1d(data_exps , exp       , 
+            datestr   , Parameters,
+            var_label ,
+            xlabel    , ylabel    , 
+            title     , figname   , 
             IMEX = False):
     '''
     Docstring for plot_1d
