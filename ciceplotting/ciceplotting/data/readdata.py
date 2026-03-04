@@ -18,6 +18,30 @@ def readdata(exp, datestr, var, datadir):
 
     return dataset_exp
 
+
+def read_cicelog_dynamics(filename): 
+
+    #---------------------------
+    # Reading max speed 
+    #---------------------------
+
+    max_speed_arctic = []
+    max_speed_antarctic = []
+    with open(filename, 'r') as f :
+        for line in f.readlines():
+            if 'max ice speed' in line:
+                line_strip = line.strip()
+                line_split = line_strip.split()
+                
+                max_speed_arctic.append(float(line_split[5]))
+                max_speed_antarctic.append(float(line_split[6]))
+
+    max_speed_arctic = np.asarray(max_speed_arctic)
+    max_speed_antarctic = np.asarray(max_speed_antarctic)
+
+    return max_speed_arctic, max_speed_antarctic
+
+
 def read_cicelog(filename, solver, precond, monitor_nonlin, monitor_solver, monitor_precond):
 
     print('Reading cicelog')
