@@ -27,10 +27,12 @@ class namelist:
         self.solver     = str(configuration_num['solver'])
         self.imex       = int(configuration_num['imex'])
         self.Global     = int(configuration_num['global'])
+        self.preconds   = [str(x) for x in configuration_num['precond'].split(',')]
 
 
         self.datadir = str(configuration_fig['datadir'])
         self.figdir    = str(configuration_fig['figdir'])
+        self.labels  = [str(x) for x in configuration_fig['labels'].split(',')]
 
 
         self.dt = float(configuration_time['dt'])

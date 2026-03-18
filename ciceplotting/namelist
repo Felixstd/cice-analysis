@@ -1,7 +1,7 @@
 [Experiment]
 
-exp = cap
-case = IMEX_CAP
+exp = N30F50P20IDT_Day,N30F50P20Diag_Day,N30F50P20Asym_Day,N30F50P20AsymIMEX_Day
+case = IMEX_gx1
 plot_fields = 1
 read_all = 1
 plot_single = 1
@@ -10,20 +10,22 @@ plot_single = 1
 kstrength = 0
 gridtype = B
 var = iceh
-dx = 5
+dx = 2
 
 [Numerical]
 solver = implicit
 imex = 0
 global = 1
+precond = pgmres,pgmres,pgmres,pgmres
 
 [Figures]
-datadir = /home/fsd001/data/ppp5/cice/runs/GlobalIMEX/history/IMEX_CAP
+datadir = /home/fsd001/data/ppp7/cice/runs/GlobalIMEX/history
 figdir = /home/fsd001/cice-analysis/Figures/
+labels = Ident,Diag,Asym,Asym-IMEX
 
 [Time]
 dt = 60
 datestr = 2005-01-01-0000
-startdate = 2005-10
-enddate = 2005-12
-freq    = %Y-%m
+startdate = 2005-01-01
+enddate = 2005-01-01
+freq    = %Y-%m-%d
