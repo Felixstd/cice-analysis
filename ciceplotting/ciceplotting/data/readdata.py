@@ -27,6 +27,16 @@ def read_cicelog_dynamics(filename):
 
     max_speed_arctic = []
     max_speed_antarctic = []
+    max_conc = []
+    uvel_point = []
+    vvel_point= []
+    strintx  = []
+    strinty  = []
+    strocnx  = []
+    strocny  = []
+    strairx  = []
+    strairy  = []
+
     with open(filename, 'r') as f :
         for line in f.readlines():
             if 'max ice speed' in line:
@@ -36,10 +46,48 @@ def read_cicelog_dynamics(filename):
                 max_speed_arctic.append(float(line_split[5]))
                 max_speed_antarctic.append(float(line_split[6]))
 
+            if 'max ice concentration' in line:
+                line_strip = line.strip()
+                line_split = line_strip.split()
+                
+                max_conc.append(float(line_split[3]))
+
+            if 'velocity:' in line:
+                line_strip = line.strip()
+                line_split = line_strip.split()
+
+                uvel_point.append(float(line_split[1]))
+                vvel_point.append(float(line_split[-1]))
+
+            if 'rheology at point' in line:
+                line_strip = line.strip()
+                line_split = line_strip.split()
+                
+                strintx.append(float(line_split[3]))
+                strinty.append(float(line_split[-1]))
+
+            if 'ice-ocean stresss at point:' in line:
+                line_strip = line.strip()
+                line_split = line_strip.split()
+                
+                strocnx.append(float(line_split[4]))
+                strocny.append(float(line_split[-1]))
+
+            if 'ice-atmosphere stress at point:' in line:
+                line_strip = line.strip()
+                line_split = line_strip.split()
+
+                strairx.append(float(line_split[4]))
+                strairy.append(float(line_split[-1]))
+
+
+
     max_speed_arctic = np.asarray(max_speed_arctic)
     max_speed_antarctic = np.asarray(max_speed_antarctic)
+    max_conc = np.asarray(max_conc)
 
-    return max_speed_arctic, max_speed_antarctic
+    return max_speed_arctic, max_speed_antarctic, max_conc, uvel_point, \
+          vvel_point, strintx, strinty, strocnx, strocny, strairx, strairy
 
 
 def read_cicelog(filename, solver, precond, monitor_nonlin, monitor_solver, monitor_precond):
