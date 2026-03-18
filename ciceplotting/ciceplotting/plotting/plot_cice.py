@@ -159,6 +159,8 @@ def plot_maxspeed(max_arctic, max_antarctic,
 
 
 def plot_1d(data_exps , exp       , 
+#------------------------------------------------------------
+def plot_1d(data_exps , experiments      , 
             datestr   , Parameters,
             var_label ,
             xlabel    , ylabel    , 
@@ -183,18 +185,22 @@ def plot_1d(data_exps , exp       ,
     '''
     dx = Parameters.dx
 
-    shape = np.shape(data_exps[0][datestr]['uvel'])
+
+    shape = np.shape(data_exps[experiments[0]][datestr][var_label])
     shape_x = shape[2]
     shape_y = shape[1]
+
+    nx = shape_x//2
+    ny = shape_y//2
 
     X = np.arange(0, shape_x, 1)*dx
     Y = np.arange(0, shape_y, 1)*dx
 
     plt.figure(1)
-    for i, data_exp in enumerate(data_exps):
+    for i, exp in enumerate(experiments):
         
-        var = data_exp[var_label]
-        plt.plot(X[-100:], var[0,200, -100:], label = Parameters.exp[i], color = colors_list1[i])
+        var = data_exps[exp][datestr][var_label]
+        plt.plot(X[:], var[0,ny, :], label = Parameters.exp[i], color = colors_list1[i])
     
     plt.legend()
     plt.xlabel(xlabel)
