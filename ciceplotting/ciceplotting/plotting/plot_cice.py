@@ -186,6 +186,106 @@ def plot_maxspeed(experiments, data_experiments,
     ax2.set_title('Antarctic')
     plt.savefig(figdir+'maxicespeed_exp.png')
 
+
+def plot_solver(Parameters, experiments, 
+                data_experiments,
+                datestr, 
+                figdir, 
+                startdate = None, enddate = None):
+    
+
+    colors = ['royalblue', 'darkred', 'forestgreen', 'darkviolet', 'k']
+    fig, ((ax1,ax2), (ax3,ax4)) = plt.subplots(2,2, figsize = (10,10))
+    
+    fig2, ax5 = plt.subplots(1, 1)
+    fig3, ax6 = plt.subplots(1,1)
+
+    fig4, ax7 = plt.subplots(1,1)
+
+    fig5, ax8 = plt.subplots(1,1)
+    
+    handles = []
+    for i, exp in enumerate(experiments):
+
+        nonlin_norm = data_experiments[exp][datestr]['picardnorm']
+        solver_norm = data_experiments[exp][datestr]['solvernorm']
+        precond_norm = data_experiments[exp][datestr]['precondnorm']
+        max_arctic = data_experiments[exp][datestr]['max_arctic']
+        max_antarctic = data_experiments[exp][datestr]['max_antarc']
+        solver_its_cycles = data_experiments[exp][datestr]['solverItsperCycles']
+        nonlin_cycles     = data_experiments[exp][datestr]['non_cycles']
+        solver_cycles     = data_experiments[exp][datestr]['solvercycles']
+
+
+        print(np.shape(solver_cycles), np.shape(nonlin_cycles))
+        p1 = ax1.plot(np.arange(len(nonlin_norm)), nonlin_norm, color = colors[i])
+
+        ax2.plot(solver_norm, color=p1[0].get_color())
+        ax3.plot(max_arctic, color=p1[0].get_color())
+        ax3.plot(max_antarctic, color=p1[0].get_color(),linestyle = '--')
+        ax4.plot(precond_norm, color=p1[0].get_color())
+
+        ax5.plot(solver_its_cycles, color = colors[i])
+
+        ax6.plot(nonlin_cycles[-1, :], color=colors[i])
+
+        ax7.plot(solver_cycles[-4, :], color = colors[i], linestyle = '--')
+        ax7.plot(solver_cycles[-3, :], color = colors[i])
+
+        for ax in [ax3, ax8]:
+            ax.plot(max_arctic, color=p1[0].get_color())
+            ax.plot(max_antarctic, color=p1[0].get_color(),linestyle = '--')
+
+        handles.append(Line2D(
+            [0], [0],
+            label=Parameters.labels[i],
+            color=p1[0].get_color()
+        ))
+
+    axs_scale = [ax1, ax2, ax4, ax6, ax7]
+    for ax in axs_scale:
+        ax.set_yscale('log')
+    # ax1.set_yscale('log')
+    fig.legend(handles = handles, bbox_to_anchor = (1.1,0.9))
+    ax1.set_ylabel('L2norm')
+    ax1.set_xlabel('Picard Iteration')
+    ax2.set_xlabel('FGMRES Iteration')
+    ax4.set_ylabel('L2norm')
+    ax4.set_xlabel('Precond Iteration')
+    ax3.set_xlabel('Picard Iteration')
+    ax3.set_ylabel('Max Ice Speed (m/s)')
+
+    fig.savefig(figdir+'precond_exps/comp_solver.png')
+
+    if (startdate is not None):
+        ax5.set_title(startdate+' to '+enddate)
+    ax5.set_xlabel('Picard Iteration')
+    ax5.set_ylabel('FGMRES Iteration')
+    fig2.legend(handles = handles, bbox_to_anchor = (1.25,0.9))
+    fig2.savefig(figdir+'precond_exps/its_solver.png')
+
+    ax6.set_xlabel('Picard Iteration')
+    ax6.set_ylabel('L2norm')
+
+    if (startdate is not None):
+        ax6.set_title(startdate+' to '+enddate+' Hour: 23')
+    fig3.legend(handles = handles, bbox_to_anchor = (1.25,0.9))
+    fig3.savefig(figdir+'precond_exps/nonlin_solver.png')
+
+    ax7.set_xlabel('FGMRES Iteration')
+    ax7.set_ylabel('L2norm')
+
+    if (startdate is not None):
+        ax7.set_title(startdate+' to '+enddate+' Hour: 23')
+    fig4.legend(handles = handles, bbox_to_anchor = (1.25,0.9))
+    fig4.savefig(figdir+'precond_exps/fgmres_norm.png')
+
+    ax8.set_xlabel('Picard Iteration')
+    ax8.set_ylabel('Max ice speed (m/s)')
+
+    fig5.legend(handles = handles, bbox_to_anchor = (1.4,0.9))
+    fig5.savefig(figdir+'precond_exps/maxvel_picard.png')
+
 #------------------------------------------------------------
 def plot_1d(data_exps , experiments      , 
             datestr   , Parameters,
