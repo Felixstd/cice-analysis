@@ -13,7 +13,7 @@ def readdata(exp, datestr, var, datadir):
     :param datadir: directory of the output file
     '''
 
-    file = exp + '_' + var + '.' + datestr + '.nc'
+    file = var + '.' + datestr + '.nc'
 
     dataset_exp = xr.open_dataset(datadir+'/'+file, decode_times = False)
 
