@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib as mpl
 import matplotlib.cm as pltcm
+import matplotlib.ticker as ticker
 
 from ciceplotting.utils.TimeUtilities import TimeUtility
 from ciceplotting.data.readnamelist import namelist
@@ -61,63 +62,135 @@ if not os.path.isdir(Parameters.figdir+Parameters.case):
     os.mkdir(Parameters.figdir+Parameters.case)
 
 #going through all experiments
-for exp in Parameters.exp:
+for i, exp in enumerate(Parameters.exp):
 
     print('Experiment: ', exp)
 
-    if not os.path.isdir(Parameters.figdir+'Experiments/'+str(exp)):
-        os.mkdir(Parameters.figdir+'Experiments/'+str(exp))
+    precond = Parameters.preconds[i]
 
     #reading data 
     if Parameters.read_all:
         print('Reading Data')
 
-        max_speed_arctic, max_speed_antarctic = readdata.read_cicelog_dynamics(Parameters.datadir+'/cice.runlog.'+Parameters.case)
+        if Parameters.Global:
 
+            (max_speed_arctic, max_speed_antarctic, max_conc, uvel_max, vvel_max, strintx, strinty
+                ,strocnx, strocny, strairx, strairy) = readdata.read_cicelog_dynamics(Parameters.datadir+'/cice.runlog.'+exp)
+            
+            (nonlin_value, progress_value, solver_value, its_solver, its_precond, 
+             precond_value, breakdowns_it, solver_cycles, solver_its_cycles, nonlin_cycles, solver_pernonlin) = \
+                readdata.read_cicelog(Parameters.datadir+'/cice.runlog.'+exp, 'fgmres', precond, 1, 1, 1, 
+                                      startdate = 20050111, 
+                                      enddate = 20050112, 
+                                      block_lines = True)
+            
 
         for datestr in dates_list:
             print('Reading Date: ', datestr)
             dataset_exp = readdata.readdata(exp, 
                                         datestr, 
                                         Parameters.var, 
-                                        Parameters.datadir)
+                                        Parameters.datadir+'/'+exp+'/')    
             
             data_experiments[exp][datestr] = dataset_exp
 
+            if Parameters.Global:
+                data_experiments[exp][datestr]['max_arctic'] = max_speed_arctic
+                data_experiments[exp][datestr]['max_antarc'] = max_speed_antarctic
+                data_experiments[exp][datestr]['picardnorm'] = nonlin_value
+                data_experiments[exp][datestr]['solvernorm'] = solver_value
+                data_experiments[exp][datestr]['precondnorm'] = precond_value
+                data_experiments[exp][datestr]['solvercycles'] = (
+                                                                    ('fgmres_cycle', 'solver_iter'),   # explicit dim names
+                                                                    solver_cycles
+                                                                )
+                data_experiments[exp][datestr]['solverItsperCycles'] = solver_its_cycles
+                data_experiments[exp][datestr]['non_cycles'] = (
+                                                                    ('timestep', 'PicardIter'),   # explicit dim names
+                                                                    nonlin_cycles
+                                                                )
+                data_experiments[exp][datestr]['solveritspernonlin'] = solver_pernonlin
 
 print('Plotting Figures')
 
 if Parameters.Global:
 
-    datestr = '2005-11'
+    date = '2005-01-11'
+    var = 'hi'
 
-    # plot_cice.plot_global(data_experiments, 
-    #                     'Cgrid', 
-    #                     datestr, 
-    #                     'vvel', 
-    #                     Parameters,
-    #                     r'$v_{ice}$ (m/s)', 
-    #                     'C-grid',
-    #                     'vvel_cgrid'+'_'+datestr)
-    
-    plot_cice.plot_global(data_experiments, 
-                        Parameters.exp[0], 
-                        datestr, 
-                        'vvel', 
+    for exp in Parameters.exp:
+            print(date, exp)
+            plot_cice.plot_global(data_experiments, 
+                        exp, 
+                        date, 
+                        var, 
                         Parameters,
-                        r'$v_{ice}$ (m/s)', 
-                        'Thermo IMEX',
-                        Parameters.exp[0]+'_vvel'+'_'+datestr)
+                        r'$Ice Thickness$ (m)', 
+                        r'$\Delta t$ = 1hr',
+                        exp+'_'+var+'_'+date)
     
 
-    plot_cice.plot_maxspeed(max_speed_arctic, max_speed_antarctic, 
+    plot_cice.plot_maxspeed(Parameters.exp, data_experiments, datestr,
                             Parameters.figdir+Parameters.case+"/", Parameters.exp[0]+'max_speed.png')
+    
+
+    plot_cice.plot_solver(Parameters, Parameters.exp, 
+                          data_experiments,
+                          datestr, 
+                          Parameters.figdir+Parameters.case+"/", 
+                          startdate='2005-01-11', enddate='2005-01-12')
+
+    # time_solvers = np.array([129.27,57.14,30.23,16.87])
+    # plt.figure()
+    # plt.bar(Parameters.exp, time_solvers)
+    # plt.ylabel('Time (s)')
+    # plt.xticks(rotation = 45)
+    # plt.savefig(Parameters.figdir+Parameters.case+"/timeslver.png")
+
+    
+    fig = plt.figure()
+    plt.plot(uvel_max[:10], label = 'u')
+    plt.plot(vvel_max[:10], label = 'v')
+    fig.legend(bbox_to_anchor=(1.2,0.9))
+    plt.grid()
+    plt.xlabel('Picard Iteration')
+    plt.ylabel('Velocity (m/s)')
+    # plt.title('Velocity at i = 2, j = 2')
+    plt.savefig(Parameters.figdir+Parameters.case+"/"+Parameters.exp[0]+"_maxvel.png")
+
+    # fig = plt.figure()
+    # plt.plot(strintx, label = 'strintx')
+    # plt.plot(strinty, label = 'strinty')
+    # fig.legend(bbox_to_anchor = (1.2,0.9))
+    # plt.xlabel('Picard Iteration')
+    # plt.grid()
+    # plt.ylabel(r'$div(\sigma)$ (Nm$^{-1}$s$^{-2}$)')
+    # plt.title('Rheology at i = 2, j = 2')
+    # plt.savefig(Parameters.figdir+Parameters.case+"/"+Parameters.exp[0]+"_rheology.png")
+
+    # fig = plt.figure()
+    # plt.plot(strocnx, label = 'strocnx', color = 'royalblue')
+    # plt.plot(strocny, label = 'strocny', color = 'darkgreen')
+    # plt.yscale('symlog', linthresh = 1e-10)
+    # ticks = [-1e-2, -1e-4, -1e-6, -1e-8, 0, 1e-8, 1e-6, 1e-4]
+    # plt.gca().set_yticks(ticks)
+    # plt.grid()
+    # # plt.gca().yaxis.set_major_locator(ticker.LogLocator(base=10, numticks=6))
+    # # plt.gca().yaxis.set_major_formatter(ticker.LogFormatterSciNotation())
+    # plt.axhline(strairx[0], color = 'royalblue', alpha = 0.5)
+    # plt.axhline(strairy[0], color = 'darkgreen', alpha = 0.5)
+    # fig.legend(bbox_to_anchor = (1.2,0.9))
+    # plt.xlabel('Picard Iteration')
+    # plt.ylabel(r'Ice-ocean Stress (Nm$^{-2}$)')
+    # plt.title('Ocean at i = 2, j = 2')
+    # plt.savefig(Parameters.figdir+Parameters.case+"/"+Parameters.exp[0]+"_oceanstress.png")
 
 if Parameters.imex:
 
+    
     plot_cice.plot_1d(data_experiments, 
-                    exp, 
-                    datestr,
+                    Parameters.exp, 
+                    Parameters.startdate,
                     Parameters, 
                     'hi',
                     r'$x$ (km)',
