@@ -1,6 +1,5 @@
 [Experiment]
-
-exp = N30F50P20IDT_Day,N30F50P20Diag_Day,N30F50P20Asym_Day,N30F50P20AsymIMEX_Day
+exp = N10F50P20diag_month,N10F50P20Asym_month,N10F50Bi20Asym_month,N10F50P20DiagIMEX_month,N10F50P20AsymIMEX_month
 case = IMEX_gx1
 plot_fields = 1
 read_all = 1
@@ -16,16 +15,16 @@ dx = 2
 solver = implicit
 imex = 0
 global = 1
-precond = pgmres,pgmres,pgmres,pgmres
+precond = pgmres,pgmres,BiCGSTAB,pgmres,pgmres
 
 [Figures]
 datadir = /home/fsd001/data/ppp7/cice/runs/GlobalIMEX/history
 figdir = /home/fsd001/cice-analysis/Figures/
-labels = Ident,Diag,Asym,Asym-IMEX
+labels = Diag,Asym,Bi-Asym,Diag-IMEX,Asym-IMEX
 
 [Time]
 dt = 60
 datestr = 2005-01-01-0000
-startdate = 2005-01-01
-enddate = 2005-01-01
+startdate = 2005-01-04
+enddate = 2005-01-11
 freq    = %Y-%m-%d
