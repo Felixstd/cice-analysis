@@ -24,6 +24,12 @@ module point_functions
 
     procedure(deriv_interface), pointer :: deriv => null()
 
+
+    interface compute_derivative
+        module procedure compute_derivative_n1
+        module procedure compute_derivative_n2
+    end interface 
+
     contains
 
     subroutine compute_derivative_n1(x, dx, derivative)
@@ -52,7 +58,7 @@ module point_functions
         enddo
     end subroutine compute_derivative_n1
 
-    subroutine compute_derivative_n2(x, dx, derivative)
+    subroutine compute_derivative_n2(x, dx, derivative, n)
 
         real, allocatable, intent(in) :: &
             x(:)
@@ -65,6 +71,7 @@ module point_functions
 
 
         integer :: &
+            n  , &
             n_x, &
             i
 
