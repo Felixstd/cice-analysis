@@ -2,6 +2,7 @@ import numpy as np
 import xarray as xr
 import re
 from ciceplotting.utils import manip_arrays
+from collections import defaultdict
 
 def readdata(exp, datestr, var, datadir):
     '''
@@ -26,69 +27,42 @@ def read_cicelog_dynamics(filename):
     # Reading max speed 
     #---------------------------
 
-    max_speed_arctic = []
-    max_speed_antarctic = []
-    max_conc = []
-    uvel_point = []
-    vvel_point= []
-    strintx  = []
-    strinty  = []
-    strocnx  = []
-    strocny  = []
-    strairx  = []
-    strairy  = []
 
-    with open(filename, 'r') as f :
-        for line in f.readlines():
-            if 'max ice speed' in line:
-                line_strip = line.strip()
-                line_split = line_strip.split()
-                
-                max_speed_arctic.append(float(line_split[5]))
-                max_speed_antarctic.append(float(line_split[6]))
+    # Map keywords to (list_key(s), column_indices)
+    PATTERNS = {
+        'total ice volume':                (('ice_volume_arctic', 'ice_volume_antarctic'),         (5,6)),
+        'max ice speed    (m/s)':          (('max_speed_arctic',  'max_speed_antarctic'),          (5,6)),
+        'max ice speed  high aice':        (('max_speed_arctic_ha',  'max_speed_antarctic_ha'),          (5,6)),
+        'max ice volume':                  (('max_ice_volume_arctic', 'max_ice_volume_antarctic'), (5,6)),
+        'max ice concentration':           (('max_conc',),                                          (3,)),
+        'velocity:':                       (('uvel_point',  'vvel_point'),                        (1,-1)),
+        'rheology at point':               (('strintx',     'strinty'),                           (3,-1)),
+        'ice-ocean stresss at point:' :    (('strocnx',    'strocny'),                            (4,-1)),
+        'ice-atmosphere stress at point:': (('strairx','strairy'),                                (4,-1)),
+        'FGMRES, sol:':                    (('uvel_fgmres', 'vvel_fgmres'),                       (2,-1)),
+    }
 
-            if 'max ice concentration' in line:
-                line_strip = line.strip()
-                line_split = line_strip.split()
-                
-                max_conc.append(float(line_split[3]))
+    data = defaultdict(list)
 
-            if 'velocity:' in line:
-                line_strip = line.strip()
-                line_split = line_strip.split()
-
-                uvel_point.append(float(line_split[1]))
-                vvel_point.append(float(line_split[-1]))
-
-            if 'rheology at point' in line:
-                line_strip = line.strip()
-                line_split = line_strip.split()
-                
-                strintx.append(float(line_split[3]))
-                strinty.append(float(line_split[-1]))
-
-            if 'ice-ocean stresss at point:' in line:
-                line_strip = line.strip()
-                line_split = line_strip.split()
-                
-                strocnx.append(float(line_split[4]))
-                strocny.append(float(line_split[-1]))
-
-            if 'ice-atmosphere stress at point:' in line:
-                line_strip = line.strip()
-                line_split = line_strip.split()
-
-                strairx.append(float(line_split[4]))
-                strairy.append(float(line_split[-1]))
+    with open(filename, 'r') as f:
+        for line in f:                          # iterate directly — no .readlines()
+            for keyword, (keys, cols) in PATTERNS.items():
+                if keyword in line:
+                    parts = line.split()        # split once per match
+                    for key, col in zip(keys, cols):
+                        data[key].append(float(parts[col]))
+                    break     
 
 
+    numpy_keys = {
+        'max_speed_arctic', 'max_speed_antarctic',
+        'ice_volume_arctic', 'ice_volume_antarctic',
+        'max_ice_volume_arctic', 'max_ice_volume_antarctic',
+        'max_conc',
+    }
+    results = {k: np.asarray(v) if k in numpy_keys else v for k, v in data.items()}
 
-    max_speed_arctic = np.asarray(max_speed_arctic)
-    max_speed_antarctic = np.asarray(max_speed_antarctic)
-    max_conc = np.asarray(max_conc)
-
-    return max_speed_arctic, max_speed_antarctic, max_conc, uvel_point, \
-          vvel_point, strintx, strinty, strocnx, strocny, strairx, strairy
+    return results
 
 
 def read_cicelog(filename, solver, precond, monitor_nonlin, monitor_solver, 
@@ -123,7 +97,7 @@ def read_cicelog(filename, solver, precond, monitor_nonlin, monitor_solver,
         previous_iter_solver = 0
     else:
         previous_iter = None
-        previous_iter_nonlin = None
+        previous_iter_nonlin = 0
         previous_iter_solver = None
    
     for line in lines:
