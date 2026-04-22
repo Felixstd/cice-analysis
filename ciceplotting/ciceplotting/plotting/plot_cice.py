@@ -143,20 +143,244 @@ def plot_global(data_experiments,
     # plt.savefig(figdir+figname)
 
 
+def plot_timeseries(data_experiments, parameters, 
+                    figdir, dt,
+                    antarctic = False):
+    
+    colors_dark = cmap_dark.colors
+    linestyles = ['-', '--']
+
+
+    fig, (ax1) = plt.subplots(1,1)
+    fig2, (ax2) = plt.subplots(1,1)
+    fig3, (ax3) = plt.subplots(1,1)
+    fig4, (ax4) = plt.subplots(1,1)
+
+    axs = [ax1, ax2, ax3, ax4]
+
+    
+    for i, exp in enumerate(parameters.exp):
+        max_s_arctic = data_experiments[exp]['max_speed_arctic']
+        max_s_antarctic = data_experiments[exp]['max_speed_antarctic']
+
+        v_arctic = data_experiments[exp]['ice_volume_arctic']
+        v_antarctic = data_experiments[exp]['ice_volume_antarctic']
+
+        max_v_arctic = data_experiments[exp]['max_ice_volume_arctic']
+        max_v_antarctic = data_experiments[exp]['max_ice_volume_antarctic']
+
+        max_s_ice_arctic = data_experiments[exp]['max_speed_arctic']
+
+
+        days = np.arange(0, len(max_s_antarctic))/6
+
+        ax1.plot(days, max_s_arctic, color = colors_dark[i], label = parameters.labels[i], linestyle = linestyles[i])
+        ax2.plot(days, v_arctic, color = colors_dark[i], label = parameters.labels[i], linestyle = linestyles[i])
+        ax3.plot(days, max_v_arctic, color = colors_dark[i], label = parameters.labels[i], linestyle = linestyles[i])
+        ax4.plot(days, max_s_arctic, color = colors_dark[i], label = parameters.labels[i], linestyle = linestyles[i])
+
+        if antarctic:
+            ax1.plot(days, max_s_antarctic, linestyle = '-.', color = colors_dark[i], label = parameters.labels[i])
+            ax2.plot(days, v_antarctic, linestyle = '-.', color = colors_dark[i], label = parameters.labels[i])
+
+
+    for ax in axs:
+
+        ax.set_xlabel('Days')
+        ax.set_title('Arctic')
+        ax.legend(loc = 'best', bbox_to_anchor = (1.02,0.95))
+
+
+    ax1.set_ylabel('Max Ice Speed (m/s)')
+    ax2.set_ylabel(r'Ice volume (m$^3$)')
+    ax3.set_ylabel(r'Max Ice volume (m)')
+    ax4.set_ylabel('Max Ice Speed (m/s)')
+    ax4.set_title('Arctic: A > 0.8 ')
+    
+    fig.savefig(figdir+'max_ice_speed_'+dt+'.png')
+    fig2.savefig(figdir+'ice_volume_'+dt+'.png')
+    fig3.savefig(figdir+'max_ice_volume_'+dt+'.png')
+    fig4.savefig(figdir+'max_ice_speedaice_'+dt+'.png')
+
+
+def plot_timeseries_pres(data_experiments, parameters, 
+                        figdir, dt,
+                        antarctic = False):
+    
+    colors_dark = cmap_dark.colors
+    linestyles = ['-', '--']
+
+
+    fig, (ax1) = plt.subplots(1,1)
+    fig2, (ax2) = plt.subplots(1,1)
+    fig3, (ax3) = plt.subplots(1,1)
+    fig4, (ax4) = plt.subplots(1,1)
+
+    axs = [ax1, ax2, ax3, ax4]
+
+    for ax in axs: 
+        for spine in ['top', 'right']:
+            ax.spines[spine].set_visible(False)
+
+    
+    for i, exp in enumerate(parameters.exp):
+        max_s_arctic = data_experiments[exp]['max_speed_arctic']
+        max_s_antarctic = data_experiments[exp]['max_speed_antarctic']
+
+        v_arctic = data_experiments[exp]['ice_volume_arctic']/1e12
+        v_antarctic = data_experiments[exp]['ice_volume_antarctic']
+
+        max_v_arctic = data_experiments[exp]['max_ice_volume_arctic']
+
+
+        days = np.arange(0, len(max_s_antarctic))/6
+
+        ax1.plot(days, max_s_arctic, color = colors_dark[i], label = parameters.labels[i], linestyle = linestyles[i])
+        ax2.plot(days, v_arctic, color = colors_dark[i], label = parameters.labels[i], linestyle = linestyles[i])
+        ax3.plot(days, max_v_arctic, color = colors_dark[i], label = parameters.labels[i], linestyle = linestyles[i])
+        ax4.plot(days, max_s_arctic, color = colors_dark[i], label = parameters.labels[i], linestyle = linestyles[i])
+
+        if antarctic:
+            ax1.plot(days, max_s_antarctic, linestyle = '-.', color = colors_dark[i], label = parameters.labels[i])
+            ax2.plot(days, v_antarctic, linestyle = '-.', color = colors_dark[i], label = parameters.labels[i])
+
+
+    for ax in axs:
+
+        ax.set_xlabel('Days')
+        # ax.set_title('Arctic')
+        # ax.legend(loc = 'best', bbox_to_anchor = (1.02,0.95))
+
+    
+
+
+    ax1.set_ylabel('Max speed\n(m/s)',rotation = 'horizontal', fontsize = 13)
+    ax1.yaxis.set_label_coords(-0.38, 0.9)
+    ax1.yaxis.label.set_horizontalalignment('left')
+    ax1.legend(ncol = 2,loc = 'upper center', bbox_to_anchor = (0.5,1.13))
+
+    ax2.set_ylabel('Volume\n(Tm$^3$)',rotation = 'horizontal', fontsize = 13)
+    ax2.yaxis.set_label_coords(-0.33, 0.9)
+    ax2.yaxis.label.set_horizontalalignment('left')
+    ax2.legend(ncol = 2,loc = 'upper center', bbox_to_anchor = (0.5,1.15))
+    ax3.set_ylabel(r'Max Ice volume (m)')
+    ax4.set_ylabel('Max Ice Speed (m/s)')
+    # ax4.set_title('Arctic: A > 0.8 ')
+    
+    fig.savefig(figdir+'max_ice_speed_'+dt+'_pres.png')
+    fig2.savefig(figdir+'ice_volume_'+dt+'_pres.png')
+    fig3.savefig(figdir+'max_ice_volume_'+dt+'_pres.png')
+    fig4.savefig(figdir+'max_ice_speedaice_'+dt+'_pres.png')
+
+    
+def plot_difference_global(parameters, data_experiments, 
+                           datestr, var,
+                           figdir):
+    """
+    This function needs to be run when only two experiments are present 
+    in the namelist. 
+
+    Args:
+        parameters (_type_): _description_
+        data_experiments (_type_): _description_
+        datestr (_type_): _description_
+        var (_type_): _description_
+        figdir (_type_): _description_
+    """
+
+    shape = np.shape(data_experiments[parameters.exp[0]][datestr][var][:])
+
+    exps = np.empty([2, shape[1], shape[2]])
+
+    for i, exp in enumerate(parameters.exp):
+
+        ds = data_experiments[exp][datestr]
+        # ds = ds.where(ds.tmask == 1)
+
+        var_arr = ds[var][:]
+
+        ni, nj = np.shape(var_arr)[1:]
+        data = np.zeros((ni, nj),dtype=np.float32)
+        data[:,:] = var_arr[0]
+
+        data[data > 100.0 ] = np.nan
+
+        exps[i] = data
+
+    
+    diff = np.diff(exps, axis = 0)[0]
+
+    # data[data > 100.0 ] = np.nan
+
+    tlon = ds['TLON'][:, :].to_numpy()
+    tlat = ds['TLAT'][:, :].to_numpy()
+
+
+    # Convert lon/lat to regular numpy arrays (remove masks)
+    tlon = np.asarray(tlon)
+    tlat = np.asarray(tlat)
+
+    # Replace non-finite values
+    # maybe this is not the best way, but works for now 
+    tlon[~np.isfinite(tlon)] = 1e10
+    tlat[~np.isfinite(tlat)] = 1e10
+
+    # make circular boundary for polar stereographic circular plots
+    theta = np.linspace(0, 2*np.pi, 100)
+    center, radius = [0.5, 0.5], 0.5
+    verts = np.vstack([np.sin(theta), np.cos(theta)]).T
+    circle = mpath.Path(verts * radius + center)
+
+    # define the colormap
+
+
+    cmap = cmo.cm.balance
+    vmax = 0.05
+    vmin = -0.05
+
+    # set up the figure with a North Polar Stereographic projection
+    fig = plt.figure(figsize=(12,12), constrained_layout = True)
+    ax = fig.add_subplot(1,2,1, projection=ccrs.NorthPolarStereo())
+    ax.set_boundary(circle, transform=ax.transAxes)
     # ax.set_extent([0, 360, 55, 90], crs=ccrs.PlateCarree())
     ax.add_feature(cfeature.LAND,zorder=100,edgecolor='k')
 
     # sets the latitude / longitude boundaries of the plot
+    ax.set_extent([0.005, 360, 90, 55], crs=ccrs.PlateCarree())
 
     #Plot the first timeslice of aice
+    this=ax.pcolormesh(tlon,
                        tlat,
+                       diff,
                        cmap=cmap,
                        vmax=vmax,
                        vmin=vmin,
                        transform=ccrs.PlateCarree(), shading = 'auto')
     
+    # ax2 = fig.add_subplot(1,2,2, projection=ccrs.SouthPolarStereo())
+
+    # ax2.set_boundary(circle, transform=ax2.transAxes)
+    # # ax.set_extent([0, 360, 55, 90], crs=ccrs.PlateCarree())
+    # ax2.add_feature(cfeature.LAND,zorder=100,edgecolor='k')
+
+    # # sets the latitude / longitude boundaries of the plot
+    # ax2.set_extent([0.005, 360, -90, -55], ccrs.PlateCarree())
+
+    #Plot the first timeslice of aice
+    # aice2=ax2.pcolormesh(tlon,
+    #                    tlat,
+    #                    diff_velocities,
+    #                    cmap=cmap,
+    #                    vmax=vmax,
+    #                    vmin=vmin,
+    #                    transform=ccrs.PlateCarree(), shading = 'auto')
+    
+    cbar = fig.colorbar(this,
+                 ax = [ax], 
                  shrink = 0.3,
                  orientation='vertical')
+    cbar.set_label(label = r'$\Delta h$ (m)', size = 14)
+    # fig.suptitle(title, x = 0.45, y = 0.65, size = 14)
 
     plt.savefig(parameters.figdir+'/'+parameters.case+'/'+'diff_'+datestr+'png')
     
