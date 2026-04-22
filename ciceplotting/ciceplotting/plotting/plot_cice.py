@@ -138,60 +138,8 @@ def plot_global(data_experiments,
     cbar.set_label(label = var_label, size = 14)
     fig.suptitle(title, x = 0.45, y = 0.65, size = 14)
 
-    plt.savefig(Parameters.figdir+'/'+Parameters.case+'/'+figname)
-    # plt.savefig(figdir+figname)
+    plt.savefig(parameters.figdir+'/'+parameters.case+'/'+'diff_'+datestr+'png')
     
-def plot_maxspeed(experiments, data_experiments,
-                  datestr, 
-                  figdir    , figname):
-    
-
-    handles = [
-        Line2D(
-            [0], [0],
-            label='Arctic',
-            color='royalblue'
-        ), 
-        Line2D(
-            [0], [0],
-            label='Antarctic',
-            color='darkred'
-        )]
-    
-    fig, (ax1,ax2) = plt.subplots(1,2, figsize = (8,4))
-    handles = []
-    for i, exp in enumerate(experiments):
-        max_arctic = data_experiments[exp][datestr]['max_arctic']
-        max_antarctic = data_experiments[exp][datestr]['max_antarc']
-
-
-        p1 = ax1.plot(max_arctic)
-
-        ax2.plot(max_antarctic, label = 'Antarctic')
-
-        if exp == 'N50F20P10':
-            label = 'Zhang'
-
-        elif exp == "N50F20P10LIN2":
-            label = 'Tremblay'
-
-        else:
-            label = exp
-
-
-        handles.append(Line2D(
-            [0], [0],
-            label=label,
-            color=p1[0].get_color()
-        ))
-
-    # ax2.set_yscale('log')
-    fig.legend(handles = handles, bbox_to_anchor = (1.1,0.9))
-    fig.supxlabel('Picard Iteration')
-    ax1.set_ylabel('Maximum Ice Speed (m/s)')
-    ax1.set_title('Arctic')
-    ax2.set_title('Antarctic')
-    plt.savefig(figdir+'maxicespeed_exp.png')
 
 
 def plot_solver(Parameters, experiments, 
