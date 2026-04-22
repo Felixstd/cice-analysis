@@ -293,6 +293,66 @@ def plot_solver(Parameters, experiments,
     fig5.legend(handles = handles, bbox_to_anchor = (1.4,0.9))
     fig5.savefig(figdir+'precond_exps/maxvel_picard.png')
 
+def plot_rect(data_exps , experiment, 
+            datestr   , Parameters,
+            var_label ,
+            IMEX = False, 
+            presentation = False):
+    
+        dx = Parameters.dx
+
+        shape = np.shape(data_exps[experiment][datestr][var_label])
+        shape_x = shape[2]
+        shape_y = shape[1]
+
+        X = np.arange(0, shape_x, 1)*dx
+        Y = np.arange(0, shape_y, 1)*dx
+
+        if var_label == 'aice':
+            cmap = cmo.cm.ice
+            vmax = 1
+            vmin = 0
+            label = 'Ice Concentration'
+
+        if var_label == 'hi':
+            cmap = cmo.cm.dense
+            cmap = 'plasma' 
+            vmax = 4.7
+            vmin = 4
+            label = 'Ice Thickness (m)'
+    
+        if ('uvel' in var_label or 'vvel' in var_label) : 
+            cmap = cmo.cm.thermal
+            vmax = 0.1
+            vmin = 0
+            label = 'Ice velocity (m/s)'
+
+        plt.figure(1)
+        ax = plt.axes()
+
+
+        # var = np.sqrt((data_exps[experiment][datestr]['uvel'][0]**2+data_exps[experiment][datestr]['vvel'][0]**2))
+
+        var = data_exps[experiment][datestr][var_label][0]
+        cm = plt.pcolormesh(X[150:260],Y[150:260],var[150:260,150:260],cmap=cmap, vmin = vmin, vmax=vmax )
+        ticks = np.linspace(800, 1200, 3) # Creates 5 labels
+        ax.set_xticks(ticks)
+        ax.set_yticks(ticks)
+        print(label)
+        if IMEX:
+            plt.title('IMEX '+label)
+        else:
+            plt.title(label)
+        plt.colorbar(cm)
+        plt.xlabel('x (km)')
+        plt.ylabel('y (km)')
+        
+        if IMEX:
+            plt.savefig(Parameters.figdir+'/'+Parameters.case+'/'+experiment+'_'+var_label+'_IMEX'+'.png')
+        else:
+            plt.savefig(Parameters.figdir+'/'+Parameters.case+'/'+experiment+'_'+var_label+'.png')
+        plt.close()
+
 #------------------------------------------------------------
 def plot_1d(data_exps , experiments      , 
             datestr   , Parameters,
