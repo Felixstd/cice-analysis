@@ -87,15 +87,12 @@ for i, exp in enumerate(Parameters.exp):
 
         if Parameters.Global:
 
-            (max_speed_arctic, max_speed_antarctic, max_conc, uvel_max, vvel_max, strintx, strinty
-                ,strocnx, strocny, strairx, strairy) = readdata.read_cicelog_dynamics(Parameters.datadir+'/cice.runlog.'+exp)
+            results = readdata.read_cicelog_dynamics(Parameters.datadir+'/cice.runlog.'+exp)
+            data_experiments[exp] = results
             
             (nonlin_value, progress_value, solver_value, its_solver, its_precond, 
              precond_value, breakdowns_it, solver_cycles, solver_its_cycles, nonlin_cycles, solver_pernonlin) = \
-                readdata.read_cicelog(Parameters.datadir+'/cice.runlog.'+exp, 'fgmres', precond, 1, 1, 1, 
-                                      startdate = 20050111, 
-                                      enddate = 20050112, 
-                                      block_lines = True)
+                readdata.read_cicelog(Parameters.datadir+'/cice.runlog.'+exp, 'fgmres', precond, 1, 1, 0)
             
 
         for datestr in dates_list:
@@ -108,8 +105,6 @@ for i, exp in enumerate(Parameters.exp):
             data_experiments[exp][datestr] = dataset_exp
 
             if Parameters.Global:
-                data_experiments[exp][datestr]['max_arctic'] = max_speed_arctic
-                data_experiments[exp][datestr]['max_antarc'] = max_speed_antarctic
                 data_experiments[exp][datestr]['picardnorm'] = nonlin_value
                 data_experiments[exp][datestr]['solvernorm'] = solver_value
                 data_experiments[exp][datestr]['precondnorm'] = precond_value
