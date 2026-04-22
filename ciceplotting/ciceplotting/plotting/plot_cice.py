@@ -49,7 +49,7 @@ def plot_global(data_experiments,
                 figname):
 
     ds = data_experiments[exp][datestr]
-    ds = ds.where(ds.tmask == 1)
+    # ds = ds.where(ds.tmask == 1)
 
     var_plot = ds[var][:]
 
@@ -91,8 +91,8 @@ def plot_global(data_experiments,
     
     if ('uvel' in var or 'vvel' in var) : 
         cmap = cmo.cm.balance
-        vmax = 0.8
-        vmin = -0.8
+        vmax = 0.1
+        vmin = -0.1
 
     # set up the figure with a North Polar Stereographic projection
     fig = plt.figure(figsize=(12,20), constrained_layout = True)
@@ -113,30 +113,50 @@ def plot_global(data_experiments,
                        vmin=vmin,
                        transform=ccrs.PlateCarree(), shading = 'auto')
     
-    ax2 = fig.add_subplot(1,2,2, projection=ccrs.SouthPolarStereo())
+    # ax2 = fig.add_subplot(1,2,2, projection=ccrs.SouthPolarStereo())
 
-    ax2.set_boundary(circle, transform=ax2.transAxes)
+    # ax2.set_boundary(circle, transform=ax2.transAxes)
+    # # ax.set_extent([0, 360, 55, 90], crs=ccrs.PlateCarree())
+    # ax2.add_feature(cfeature.LAND,zorder=100,edgecolor='k')
+
+    # # sets the latitude / longitude boundaries of the plot
+    # ax2.set_extent([0.005, 360, -90, -55], ccrs.PlateCarree())
+
+    # #Plot the first timeslice of aice
+    # aice2=ax2.pcolormesh(tlon,
+    #                    tlat,
+    #                    data,
+    #                    cmap=cmap,
+    #                    vmax=vmax,
+    #                    vmin=vmin,
+    #                    transform=ccrs.PlateCarree(), shading = 'auto')
+    
+    cbar = fig.colorbar(this,
+                 ax = [ax], 
+                 shrink = 0.3,
+                 orientation='vertical')
+    cbar.set_label(label = var_label, size = 14)
+    # fig.suptitle(title, x = 0.45, y = 0.65, size = 14)
+    fig.suptitle(title, y = 0.65,size = 14)
+
+    plt.savefig(Parameters.figdir+'/'+Parameters.case+'/'+figname)
+    # plt.savefig(figdir+figname)
+
+
     # ax.set_extent([0, 360, 55, 90], crs=ccrs.PlateCarree())
-    ax2.add_feature(cfeature.LAND,zorder=100,edgecolor='k')
+    ax.add_feature(cfeature.LAND,zorder=100,edgecolor='k')
 
     # sets the latitude / longitude boundaries of the plot
-    ax2.set_extent([0.005, 360, -90, -55], ccrs.PlateCarree())
 
     #Plot the first timeslice of aice
-    aice2=ax2.pcolormesh(tlon,
                        tlat,
-                       data,
                        cmap=cmap,
                        vmax=vmax,
                        vmin=vmin,
                        transform=ccrs.PlateCarree(), shading = 'auto')
     
-    cbar = fig.colorbar(aice2,
-                 ax = [ax, ax2], 
                  shrink = 0.3,
                  orientation='vertical')
-    cbar.set_label(label = var_label, size = 14)
-    fig.suptitle(title, x = 0.45, y = 0.65, size = 14)
 
     plt.savefig(parameters.figdir+'/'+parameters.case+'/'+'diff_'+datestr+'png')
     
