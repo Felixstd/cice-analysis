@@ -304,10 +304,9 @@ def plot_rect(data_exps , experiment,
 #------------------------------------------------------------
 def plot_1d(data_exps , experiments      , 
             datestr   , Parameters,
-            var_label ,
-            xlabel    , ylabel    , 
-            title     , figname   , 
-            IMEX = False):
+            var_label , title,
+            xlabel    , ylabel    ,
+            island = False):
     '''
     Docstring for plot_1d
     
@@ -338,70 +337,181 @@ def plot_1d(data_exps , experiments      ,
     X = np.arange(0, shape_x, 1)*dx
     Y = np.arange(0, shape_y, 1)*dx
 
-    plt.figure(1)
-    for i, exp in enumerate(experiments):
-        
-        var = data_exps[exp][datestr][var_label]
-        plt.plot(X[:], var[0,ny, :], label = Parameters.exp[i], color = colors_list1[i])
-    
-    plt.legend()
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.savefig(Parameters.figdir+'/'+Parameters.case+'/'+figname)
+    if island:
+        ny = shape_y//2
 
-    dt_handles = {1:Line2D([0], [0], color='k', linestyle='-', label='1 min'), 
-               5:Line2D([0], [0], color=colors_list1[1], linestyle='-', label='5 min'), 
-               20:Line2D([0], [0], color=colors_list1[2], linestyle='-', label='20 min'), 
-               40:Line2D([0], [0], color=colors_list1[3], linestyle='-', label='40 min'),
-               60:Line2D([0], [0], color=colors_list1[4], linestyle='-', label='60 min'), 
-               120:Line2D([0], [0], color=colors_list1[5], linestyle='-', label='120 min'), 
-               180:Line2D([0], [0], color=colors_list1[6], linestyle='-', label='180 min')
-    }
+        X = np.arange(0, shape_x, 1)*dx
+
+        fig = plt.figure(1)
+        for i, exp in enumerate(experiments):
+            
+            var = data_exps[exp][datestr][var_label]
+            plt.plot(X[100:300], var[0,ny,100:300], label = Parameters.labels[i], color = colors_list1[i])
 
 
-    if IMEX:
-        fig = plt.figure(2, figsize = (5, 4))
-        ax = plt.axes()
-        handles = []
-        seen_dt = set()
-        scheme_handles = [
-            Line2D([0], [0], color='k', linestyle='-',  label='SIT'),
-            Line2D([0], [0], color='k', linestyle='--', label='IMEX'),
-        ]
-        for i, data_exp in enumerate(data_exps):
-            exp = Parameters.exp[i]
-            var = data_exp[var_label]
-            dt = extract_number(exp)
-
-            if exp.startswith('imex'):
-                linestyle = '--'
-            else:
-                linestyle = '-'
-
-            color = dt_to_color.get(dt)
-
-            if dt not in seen_dt:
-                handle = dt_handles.get(dt)
-                handles.append(handle)
-                seen_dt.add(dt)
-
-            plt.plot(X[-100:], var[0,200, -100:], 
-                    linestyle = linestyle, 
-                    color = color)
-
-        
-        handles = handles + scheme_handles
-
-        fig.legend(handles, [h.get_label() for h in handles],
-                loc='outside upper right', frameon=False, bbox_to_anchor = (1.2, 0.9))
-
-        plt.title(title)
-        plt.legend()
+        if title:
+            plt.title(title)
+            fig.legend(bbox_to_anchor = (1.4,0.9))
+        else:
+            fig.legend(bbox_to_anchor = (1.5,0.9))
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
-        ax.set_aspect('auto')
-        plt.savefig(Parameters.figdir+'/'+Parameters.case+'/'+figname)
+        plt.savefig(Parameters.figdir+'/'+Parameters.case+'/'+var_label+'_'+Parameters.exp[0][0]+Parameters.exp[0][5:]+'.png')
+        plt.close()
+
+
+
+    else:
+        cw = 5.36e-3
+        cair = 1.2e-3
+        rhoair = 1.3
+        rhowater = 1026
+        uair = 10
+        tax = cair*rhoair*uair**2
+        Cw = rhowater*cw
+        # C = 4*0.01
+        C = 4*np.sqrt(tax/Cw)
+        C = 0.01
+        L = 2000e3
+        x = np.linspace(1500e3, L, 10000)
+        Aice = 0.8 + 0.8*np.exp(2*(x-L))
+        Pstar = 27.5e3*np.exp(-20*(1-Aice))
         
+        A = (8/9)*(C/Pstar)
+
+        utheo = np.sqrt(tax/Cw)*np.tanh(np.sqrt(tax*Cw)*A*(L-x))
+        print(utheo)
+
+        nx = 3*shape_x//4
+        ny = shape_y//2
+
+        X = np.arange(0, shape_x, 1)*dx
+        Y = np.arange(0, shape_y, 1)*dx
+
+        fig = plt.figure(1)
+        for i, exp in enumerate(experiments):
+            
+            var = data_exps[exp][datestr][var_label]
+            plt.plot(X[nx:], var[0,ny,nx :], label = Parameters.labels[i], color = colors_list1[i])
+            # plt.plot(x/1e3, utheo)
+        if title:
+            plt.title(title)
+            fig.legend(bbox_to_anchor = (1.4,0.9))
+        else:
+            fig.legend(bbox_to_anchor = (1.25,0.9))
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        plt.savefig(Parameters.figdir+'/'+Parameters.case+'/'+var_label+'_'+Parameters.exp[0][0]+Parameters.exp[0][5:]+'.png')
+        plt.close()
+
+
+def plot_1d_presentation(data_exps , experiments      , 
+                        datestr   , Parameters,
+                        var_label , title,
+                        xlabel    , ylabel    ,
+                        island = False):
+    
+    dx = Parameters.dx
+
+    shape = np.shape(data_exps[experiments[0]][datestr][var_label])
+    shape_x = shape[2]
+    shape_y = shape[1]
+
+    X = np.arange(0, shape_x, 1)*dx
+    Y = np.arange(0, shape_y, 1)*dx
+
+    if island:
+        ny = shape_y//2
+
+        X = np.arange(0, shape_x, 1)*dx
+        fig = plt.figure(1)
+        ax = plt.axes()
+        for spine in ['top', 'right']:
+            ax.spines[spine].set_visible(False)
+
+        for i, exp in enumerate(experiments):
+            
+            var = data_exps[exp][datestr][var_label]
+            plt.plot(X[100:220], var[0,ny,100:220], label = Parameters.labels[i], color = colors_list1[i+1])
+
+
+        if title:
+            plt.title(title)
+            fig.legend(bbox_to_anchor = (1.4,0.9))
+        else:
+            fig.legend(bbox_to_anchor = (0.55,0.34))
+        plt.xlabel(xlabel, fontsize = 13)
+        ax.set_ylabel(ylabel, rotation = 'horizontal', fontsize = 13)
+        ax.yaxis.set_label_coords(-0.37, 0.83)
+        ax.yaxis.label.set_horizontalalignment('left')
+        ticks = ax.get_yticks()
+        labels = [f"{t:g}" for t in ticks]
+        labels[-2] = ""
+        print(ticks,labels)
+        ax.set_yticks(ticks[1:-1])
+        ax.set_yticklabels(labels[1:-1])
+        # labels = ax.get_yticklabels()
+        # labels[-1].set_visible(False) # Hides the last label
+        plt.savefig(Parameters.figdir+'/'+Parameters.case+'/'+var_label+'_pres_'+Parameters.exp[0][0]+Parameters.exp[0][5:]+'.png')
+        plt.close()
+
+
+
+    else:
+        cw = 5.36e-3
+        cair = 1.2e-3
+        rhoair = 1.3
+        rhowater = 1026
+        uair = 10
+        tax = cair*rhoair*uair**2
+        Cw = rhowater*cw
+        # C = 4*0.01
+        C = 4*np.sqrt(tax/Cw)
+        C = 0.01
+        L = 2000e3
+        x = np.linspace(1500e3, L, 10000)
+        Aice = 0.8 + 0.8*np.exp(2*(x-L))
+        Pstar = 27.5e3*np.exp(-20*(1-Aice))
+        
+        A = (8/9)*(C/Pstar)
+
+        utheo = np.sqrt(tax/Cw)*np.tanh(np.sqrt(tax*Cw)*A*(L-x))
+
+        nx = 3*shape_x//4
+        ny = shape_y//2
+
+        X = np.arange(0, shape_x, 1)*dx
+        Y = np.arange(0, shape_y, 1)*dx
+
+        fig = plt.figure(1)
+        ax = plt.axes()
+        for spine in ['top', 'right']:
+            ax.spines[spine].set_visible(False)
+
+        for i, exp in enumerate(experiments):
+            
+            var = data_exps[exp][datestr][var_label]
+            # if i< 2:
+            #     plt.plot(X[nx:], var[0,ny,nx :], color = colors_list1[i])
+            # else:
+            plt.plot(X[nx:], var[0,ny,nx :], label = Parameters.labels[i], color = colors_list1[i])
+            # plt.plot(x/1e3, utheo)
+        if title:
+            plt.title(title)
+            fig.legend(bbox_to_anchor = (1.4,0.9))
+        else:
+            fig.legend(bbox_to_anchor = (0.45,0.5))
+        plt.xlabel(xlabel, fontsize = 13)
+        ax.set_ylabel(ylabel, rotation = 'horizontal', fontsize = 13)
+        ax.yaxis.set_label_coords(-0.35, 0.8)
+        ax.yaxis.label.set_horizontalalignment('left')
+        plt.savefig(Parameters.figdir+'/'+Parameters.case+'/'+var_label+'_pres_'+Parameters.exp[0][0]+Parameters.exp[0][5:]+'.png')
+        plt.close()
+
+
+
+
+
 
 
 
