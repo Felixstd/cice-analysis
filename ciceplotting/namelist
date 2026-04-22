@@ -1,5 +1,5 @@
 [Experiment]
-exp = N10F50P20diag_month,N10F50P20Asym_month,N10F50Bi20Asym_month,N10F50P20DiagIMEX_month,N10F50P20AsymIMEX_month
+exp = B-N10F50P20-k0-3hr,B-N10F50P20-k0-3hr-IMEX
 case = IMEX_gx1
 plot_fields = 1
 read_all = 1
@@ -9,22 +9,22 @@ plot_single = 1
 kstrength = 0
 gridtype = B
 var = iceh
-dx = 2
+dx = 5
 
 [Numerical]
 solver = implicit
 imex = 0
 global = 1
-precond = pgmres,pgmres,BiCGSTAB,pgmres,pgmres
+precond = pgmres,pgmres
 
 [Figures]
-datadir = /home/fsd001/data/ppp7/cice/runs/GlobalIMEX/history
+datadir = /home/fsd001/data/ppp8/cice/runs/gx1IMEX/history
 figdir = /home/fsd001/cice-analysis/Figures/
-labels = Diag,Asym,Bi-Asym,Diag-IMEX,Asym-IMEX
+labels = VP,IMEX
 
 [Time]
-dt = 60
-datestr = 2005-01-01-0000
-startdate = 2005-01-04
-enddate = 2005-01-11
-freq    = %Y-%m-%d
+dt = 3
+datestr = 2005-01-02
+startdate = 2006-01
+enddate = 2006-02
+freq    = %Y-%m

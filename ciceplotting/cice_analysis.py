@@ -27,6 +27,7 @@ from ciceplotting.data.readnamelist import namelist
 from ciceplotting.data import readdata
 from ciceplotting.plotting import plot_cice
 from collections import defaultdict
+from argparse import ArgumentParser
 
 
 import configparser
@@ -38,9 +39,21 @@ import os
 #configuration of  the style of figures
 plt.style.use('/home/fsd001/cice-analysis/ciceplotting/ciceplotting/plotting/science.mplstyle')
 
+parser = ArgumentParser(prog='CICE-Analysis',
+                    description='Program used to analyse CICE outputs')
+parser.add_argument('-c', "--case", dest = 'case', 
+                            help = 'case name for fig dir')
+args = parser.parse_args()
+case_arg = args.case
 
 config_exp = configparser.ConfigParser(interpolation=None)
-config_exp.read('./namelist')
+
+if case_arg == 'gx':
+    config_exp.read('./namelist')
+
+elif case_arg == 'ideal':
+    config_exp.read('./namelist_ideal')
+
 
 #reading namelist
 Parameters = namelist(configuration_exp  = config_exp['Experiment'], 

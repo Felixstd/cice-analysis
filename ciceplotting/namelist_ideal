@@ -1,0 +1,30 @@
+[Experiment]
+exp  = B3hrk1VP-5,B3hrk1VP-5-IMEX
+case = INSTAhpcLISLAND
+plot_fields = 1
+read_all = 1
+plot_single = 1
+
+[Dynamics]
+kstrength = 0
+gridtype = B
+var = iceh
+dx = 5
+
+[Numerical]
+solver = implicit
+imex = 1
+global = 0
+precond = pgmres,pgmres,1,1,1,1
+
+[Figures]
+datadir = /home/fsd001/data/ppp8/cice/runs/INSTAhpcLISLAND/history
+figdir = /home/fsd001/cice-analysis/Figures/
+labels = ,VP-3hr-IMEX,VP-3hr
+
+[Time]
+dt = 4
+datestr = 2005-01-02
+startdate = 2005-01-02
+enddate = 2005-01-02
+freq    = %Y-%m-%d
