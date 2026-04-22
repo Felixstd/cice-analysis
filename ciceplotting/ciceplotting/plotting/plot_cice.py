@@ -13,6 +13,8 @@ from matplotlib.gridspec import GridSpec
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
+import matplotlib.colors as mcolors 
+
 import re
 
 colors_list1 = mpl.color_sequences['Dark2']
@@ -26,6 +28,11 @@ dt_to_color = {
                 120: colors_list1[5],
                 180: colors_list1[6]
                 }
+
+
+colors = ['darkred', 'royalblue','darkgreen', 'darkblue', 'darkviolet', 'darkmagenta', 
+          'deeppink', 'darkturquoise', 'darkorange']
+cmap_dark = mcolors.ListedColormap(colors)
 
 def extract_number(label):
     match = re.search(r'B(\d+)', label)
