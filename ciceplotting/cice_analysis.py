@@ -123,7 +123,7 @@ print('Plotting Figures')
 
 if Parameters.Global:
 
-    date = '2005-01-11'
+    date = '2006-01'
     var = 'hi'
 
     for exp in Parameters.exp:
@@ -133,22 +133,103 @@ if Parameters.Global:
                         date, 
                         var, 
                         Parameters,
-                        r'$Ice Thickness$ (m)', 
-                        r'$\Delta t$ = 1hr',
+                        r'Ice Thickness (m)', 
+                        r'$\Delta t$ = 4hr',
                         exp+'_'+var+'_'+date)
+
+    plot_cice.plot_timeseries(data_experiments, Parameters,
+                              Parameters.figdir+Parameters.case+"/", 
+                              str(Parameters.dt))
     
-
-    plot_cice.plot_maxspeed(Parameters.exp, data_experiments, datestr,
-                            Parameters.figdir+Parameters.case+"/", Parameters.exp[0]+'max_speed.png')
+    plot_cice.plot_timeseries_pres(data_experiments, Parameters,
+                              Parameters.figdir+Parameters.case+"/", 
+                              str(Parameters.dt))
     
+    # plot_cice.plot_solver(Parameters, Parameters.exp, 
+    #                       data_experiments,
+    #                       datestr, 
+    #                       Parameters.figdir+Parameters.case+"/")
 
-    plot_cice.plot_solver(Parameters, Parameters.exp, 
-                          data_experiments,
-                          datestr, 
-                          Parameters.figdir+Parameters.case+"/", 
-                          startdate='2005-01-11', enddate='2005-01-12')
+    plot_cice.plot_difference_global(Parameters, data_experiments, 
+                                     date, 'hi',
+                                     Parameters.figdir)
 
-    # time_solvers = np.array([129.27,57.14,30.23,16.87])
+
+if Parameters.imex:
+
+    # if Parameters.case == 'IMEX_ideal':
+    plot_cice.plot_1d(data_experiments, 
+                        Parameters.exp, 
+                        Parameters.startdate,
+                        Parameters, 
+                        'uvel',
+                        '',
+                        r'$x$ (km)',
+                        r'$u$ (m/s)', 
+                        island = True)
+    
+    plot_cice.plot_1d_presentation(data_experiments, 
+                        Parameters.exp, 
+                        Parameters.startdate,
+                        Parameters, 
+                        'hi',
+                        '',
+                        r'$x$ (km)',
+                        'Thickness\n(m)', 
+                        island = True)
+    
+    if (Parameters.case == 'IMEX_lshape' or Parameters.case == 'INSTAhpcLISLAND'):
+        for exp in Parameters.exp:
+            if 'IMEX' in exp:
+                plot_cice.plot_rect(data_experiments , exp, 
+                                    Parameters.startdate   , Parameters,
+                                    'hi' ,
+                                    IMEX = True)
+            else:
+                plot_cice.plot_rect(data_experiments , exp, 
+                                    Parameters.startdate, Parameters,
+                                    'hi' ,
+                                    IMEX = False)
+            
+    #making a figure with multiple experiments
+    # print('Plotting Figures')
+    # x = np.arange(300, 400)*Parameters.dx
+
+    # labels = ['Default', 'IMEXSerial', 'IMEXParallel']
+    # #thickness
+    # print('Plotting Thicknesses')
+    # plt.figure()
+    # for i, h in enumerate(h_experiments):
+    #     plt.plot(x, h[0, 200, 300:], label = Parameters.exp[i])
+    # plt.legend()
+    # plt.xlabel(r'$x$ (km)')
+    # plt.ylabel(r'$h$ (m)')
+    # plt.savefig(Parameters.figdir+'/'+Parameters.case+'/h_IMEX'+'.png')
+
+
+
+
+    # print('Plotting Velocities')
+    # # velocity
+    # plt.figure()
+    # for i, uvel in enumerate(uvels_experiments):
+    #     plt.plot(x, uvel[0, 200, 300:], label = Parameters.exp[i])
+    # plt.legend()
+    # plt.xlabel(r'$x$ (km)')
+    # plt.ylabel(r'$u_{ice}$ (m/s)')
+    # plt.savefig(Parameters.figdir+'/'+Parameters.case+'/uvel_IMEX'+'.png')
+
+
+    # h_diff = h_experiments[0] - h_experiments[1]
+
+    # plt.figure()
+    # plt.plot(x, h_diff[0, 200, 300:])
+    # plt.legend()
+    # plt.xlabel(r'$x$ (km)')
+    # plt.ylabel(r'$\Delta h$ (m)')
+    # plt.savefig(Parameters.figdir+'/'+Parameters.case+'/diffh_IMEX'+'.png')
+
+        # time_solvers = np.array([129.27,57.14,30.23,16.87])
     # plt.figure()
     # plt.bar(Parameters.exp, time_solvers)
     # plt.ylabel('Time (s)')
@@ -156,15 +237,25 @@ if Parameters.Global:
     # plt.savefig(Parameters.figdir+Parameters.case+"/timeslver.png")
 
     
-    fig = plt.figure()
-    plt.plot(uvel_max[:10], label = 'u')
-    plt.plot(vvel_max[:10], label = 'v')
-    fig.legend(bbox_to_anchor=(1.2,0.9))
-    plt.grid()
-    plt.xlabel('Picard Iteration')
-    plt.ylabel('Velocity (m/s)')
-    # plt.title('Velocity at i = 2, j = 2')
-    plt.savefig(Parameters.figdir+Parameters.case+"/"+Parameters.exp[0]+"_maxvel.png")
+    # fig = plt.figure()
+    # plt.plot(uvel_max[:10], label = 'u')
+    # plt.plot(vvel_max[:10], label = 'v')
+    # fig.legend(bbox_to_anchor=(1.2,0.9))
+    # plt.grid()
+    # plt.xlabel('Picard Iteration')
+    # plt.ylabel('Velocity (m/s)')
+    # # plt.title('Velocity at i = 2, j = 2')
+    # plt.savefig(Parameters.figdir+Parameters.case+"/"+Parameters.exp[0]+"_maxvel.png")
+
+    # fig = plt.figure()
+    # plt.plot(uvel_fgmres, label = 'u')
+    # plt.plot(vvel_fgmres, label = 'v')
+    # fig.legend(bbox_to_anchor=(1.2,0.9))
+    # plt.grid()
+    # plt.xlabel('FGMRES Iteration')
+    # plt.ylabel('Velocity (m/s)')
+    # # plt.title('Velocity at i = 2, j = 2')
+    # plt.savefig(Parameters.figdir+Parameters.case+"/"+Parameters.exp[0]+"_FMGRESmaxvel.png")
 
     # fig = plt.figure()
     # plt.plot(strintx, label = 'strintx')
@@ -192,55 +283,3 @@ if Parameters.Global:
     # plt.ylabel(r'Ice-ocean Stress (Nm$^{-2}$)')
     # plt.title('Ocean at i = 2, j = 2')
     # plt.savefig(Parameters.figdir+Parameters.case+"/"+Parameters.exp[0]+"_oceanstress.png")
-
-if Parameters.imex:
-
-    
-    plot_cice.plot_1d(data_experiments, 
-                    Parameters.exp, 
-                    Parameters.startdate,
-                    Parameters, 
-                    'hi',
-                    r'$x$ (km)',
-                    r'$h$ (m)', 
-                    'Rothrock',
-                    'h_imex.png', 
-                    IMEX = True)
-
-    #making a figure with multiple experiments
-    print('Plotting Figures')
-    x = np.arange(300, 400)*Parameters.dx
-
-    labels = ['Default', 'IMEXSerial', 'IMEXParallel']
-    #thickness
-    print('Plotting Thicknesses')
-    plt.figure()
-    for i, h in enumerate(h_experiments):
-        plt.plot(x, h[0, 200, 300:], label = Parameters.exp[i])
-    plt.legend()
-    plt.xlabel(r'$x$ (km)')
-    plt.ylabel(r'$h$ (m)')
-    plt.savefig(Parameters.figdir+'/'+Parameters.case+'/h_IMEX'+'.png')
-
-
-
-
-    print('Plotting Velocities')
-    # velocity
-    plt.figure()
-    for i, uvel in enumerate(uvels_experiments):
-        plt.plot(x, uvel[0, 200, 300:], label = Parameters.exp[i])
-    plt.legend()
-    plt.xlabel(r'$x$ (km)')
-    plt.ylabel(r'$u_{ice}$ (m/s)')
-    plt.savefig(Parameters.figdir+'/'+Parameters.case+'/uvel_IMEX'+'.png')
-
-
-    h_diff = h_experiments[0] - h_experiments[1]
-
-    plt.figure()
-    plt.plot(x, h_diff[0, 200, 300:])
-    plt.legend()
-    plt.xlabel(r'$x$ (km)')
-    plt.ylabel(r'$\Delta h$ (m)')
-    plt.savefig(Parameters.figdir+'/'+Parameters.case+'/diffh_IMEX'+'.png')
