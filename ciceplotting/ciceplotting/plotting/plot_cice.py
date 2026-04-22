@@ -217,8 +217,8 @@ def plot_solver(Parameters, experiments,
         nonlin_norm = data_experiments[exp][datestr]['picardnorm']
         solver_norm = data_experiments[exp][datestr]['solvernorm']
         precond_norm = data_experiments[exp][datestr]['precondnorm']
-        max_arctic = data_experiments[exp][datestr]['max_arctic']
-        max_antarctic = data_experiments[exp][datestr]['max_antarc']
+        max_arctic = data_experiments[exp]['max_speed_arctic']
+        max_antarctic = data_experiments[exp]['max_speed_antarctic']
         solver_its_cycles = data_experiments[exp][datestr]['solverItsperCycles']
         nonlin_cycles     = data_experiments[exp][datestr]['non_cycles']
         solver_cycles     = data_experiments[exp][datestr]['solvercycles']
@@ -268,7 +268,7 @@ def plot_solver(Parameters, experiments,
         ax5.set_title(startdate+' to '+enddate)
     ax5.set_xlabel('Picard Iteration')
     ax5.set_ylabel('FGMRES Iteration')
-    fig2.legend(handles = handles, bbox_to_anchor = (1.25,0.9))
+    fig2.legend(handles = handles, bbox_to_anchor = (1.3,0.9))
     fig2.savefig(figdir+'precond_exps/its_solver.png')
 
     ax6.set_xlabel('Picard Iteration')
@@ -276,7 +276,7 @@ def plot_solver(Parameters, experiments,
 
     if (startdate is not None):
         ax6.set_title(startdate+' to '+enddate+' Hour: 23')
-    fig3.legend(handles = handles, bbox_to_anchor = (1.25,0.9))
+    fig3.legend(handles = handles, bbox_to_anchor = (1.3,0.9))
     fig3.savefig(figdir+'precond_exps/nonlin_solver.png')
 
     ax7.set_xlabel('FGMRES Iteration')
@@ -284,13 +284,13 @@ def plot_solver(Parameters, experiments,
 
     if (startdate is not None):
         ax7.set_title(startdate+' to '+enddate+' Hour: 23')
-    fig4.legend(handles = handles, bbox_to_anchor = (1.25,0.9))
+    fig4.legend(handles = handles, bbox_to_anchor = (1.3,0.9))
     fig4.savefig(figdir+'precond_exps/fgmres_norm.png')
 
     ax8.set_xlabel('Picard Iteration')
     ax8.set_ylabel('Max ice speed (m/s)')
 
-    fig5.legend(handles = handles, bbox_to_anchor = (1.4,0.9))
+    fig5.legend(handles = handles, bbox_to_anchor = (1.3,0.9))
     fig5.savefig(figdir+'precond_exps/maxvel_picard.png')
 
 def plot_rect(data_exps , experiment, 
