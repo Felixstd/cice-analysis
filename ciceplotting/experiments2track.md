@@ -1,3 +1,38 @@
+#End of Internship
+
+The most up-to-date experiments are in three main folders:
+
+1. ```/home/fsd001/data/ppp8/cice/runs/gx1IMEX/history```
+2. ```/home/fsd001/data/ppp8/cice/runs/INSTAhpcBOX/history```
+3. ```/home/fsd001/data/ppp8/cice/runs/INSTAhpcLISLAND/history```
+
+They were run with ppp8 and they were done with the last version of IMEX. 
+Those experiments are mostly sensititivy experiments. The time step was varied for 
+a set of given parameters between experiments and its effect on the instabilities 
+was observed (with and without IMEX). 
+
+For the idealised experiments, the naming convention if the following:
+
+- GridTimeStepIcestrengthRheology
+
+So, an experiment will look like: ```B1hrk1VP-IMEX```
+
+Most of the idealised experiments were run for one day so, in their respective directory, only
+one file will be in it ```iceh.2005-01-02.nc```
+
+
+There is really one set of gx1 experiments that are worth to look at now. The naming convention for the 
+global experiments is quite different:
+
+- Grid-ItsnonlinItsFGMRESItsPGMRES-Ice Strength-Time step
+
+So, an experiment will like:
+
+- B-N10F50P20-k0-3hr 
+
+Inside of the directory will be monthly state files for the given number of years the experiment was run. 
+
+
 # Experiments - gx1 
 This is the list of experiments made with CICE to test IMEX and the newly 
 implemented preconditionners. 
