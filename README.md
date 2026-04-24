@@ -109,7 +109,7 @@ but which contains useful bash scripts when using cice.
 
 
 ### Architecture 
-
+```
 - ciceplotting/
         - cice_analysis.py
         - namelists
@@ -127,3 +127,4 @@ but which contains useful bash scripts when using cice.
 		- utils/
 			- manip_arrays.py 
 			- TimeUtilities.py 
+```
